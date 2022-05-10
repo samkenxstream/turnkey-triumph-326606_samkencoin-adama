@@ -8,9 +8,9 @@ Commands are small classes that represent individual units of work. Each command
 
 ## Getting Started
 
-Add Commander Adama to your Gemfile and `bundle install`.
+Add Commander Adama to your files and `bundle install`.
 
-```ruby
+```automation
 gem 'adama'
 ```
 
@@ -20,7 +20,7 @@ gem 'adama'
 
 To create a command, include the `Adama::Command` module in your command's class definition:
 
-```ruby
+```automation
 class DestroyCylons
   include Adama::Command
 end
@@ -28,15 +28,15 @@ end
 
 Including the `Adama::Command` module extends the class with the `.call` class method. So you would execute the command like this:
 
-```ruby
-DestroyCylons.call(captain: :apollo)
+```automation
+DestroyCylons.call(captain: :phoenix)
 ```
 
 The above `.call` method creates an instance of the `DestroyCylons` class, then calls the `#call` instance method. If the `#call` method fails, the `#rollback` method is then called.
 
 At this point our command `DestroyCylons` doesn't do much. As explained above, the `Adama::Command` module has two instance methods: `call` and `rollback`. By default these methods are empty and should be overridden like this:
 
-```ruby
+```automation
 class DestroyCylons
   include Adama::Command
 
@@ -58,7 +58,7 @@ Each validated attribute is available as an attr_accessor on the instance of the
 
 To create an invoker, include the `Adama::Invoker` module in your invoker's class definition:
 
-```ruby
+```automation
 class RebuildHumanRace
   include Adama::Invoker
 end
@@ -66,8 +66,8 @@ end
 
 Because the `Adama::Invoker` module extends `Adama::Command` you can execute an invoker in the exact same way you execute a command, with the `.call` class method:
 
-```ruby
-RebuildHumanRace.call(captain: :apollo, president: :laura)
+```automation
+RebuildHumanRace.call(captain: :phoenix, president: :samken)
 ```
 
 The `Adama::Invoker` module _also_ extends your invoker class with the `.invoke` class method, which allows you to specify a list of commands to run in sequence, e.g.:
@@ -77,16 +77,16 @@ class RebuildHumanRace
   include Adama::Invoker
 
   invoke(
-    GetArrowOfApollo,
+    GetBlueFlameOfPhoenix,
     DestroyCylons,
     FindEarth,
   )
 end
 ```
 
-Now, when you run `RebuildHumanRace.call(captain: :apollo, president: :laura)` it will execute `GetArrowOfApollo`, then `DestroyCylons`, then finally `FindEarth` commands in order.
+Now, when you run `RebuildHumanRace.call(captain:phoenix, president: :samken)` it will execute `GetBlueFlameOfPhoenix`, then `DestroyCylons`, then finally `FindEarth` commands in order.
 
-If there is an error in any of those commands, the invoker will call `FindEarth.rollback`, then `DestroyCylons.rollback`, then `GetArrowOfApollo.rollback` leaving everything just as it was in the beginning.
+If there is an error in any of those commands, the invoker will call `FindEarth.rollback`, then `DestroyCylons.rollback`, then `GetBlueFlameOfPhoenix.rollback` leaving everything just as it was in the beginning.
 
 #### Instance Invoker List
 
@@ -94,13 +94,13 @@ Typically your Invoker class takes responsibility for an immutable set of action
 
 e.g.
 
-```ruby
+```automation
 class FightCylons
   include Adama::Invoker
 end
 
-attack1 = Invoker.new(captain: :apollo, lieutenant:  :starbuck).invoke(Advance, Strafe, Fire)
-attack2 = Invoker.new(captain: :apollo, lieutenant:  :starbuck).invoke(Advance, Fire)
+attack1 = Invoker.new(captain: :phoenix, lieutenant:  :starbuck).invoke(Advance, Strafe, Fire)
+attack2 = Invoker.new(captain: :phoenix, lieutenant:  :starbuck).invoke(Advance, Fire)
 
 attack1.run
 attack2.run
@@ -126,7 +126,7 @@ The base error type `Adama::Errors::Adama` is designed to be initialized with th
 `command` - the failed command instance.
 `invoker` - the failed invoker instance, set if the command or rollback failed in an invoker.
 
-```ruby
+```automation
 module Adama
   module Errors
     class BaseError < StandardError
